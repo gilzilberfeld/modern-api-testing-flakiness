@@ -1,0 +1,15 @@
+# Bigger Better Bookstore - Flaky API Tests Demo
+# Python 3.10+
+
+# API Server
+flask==3.0.0
+werkzeug==3.0.1
+
+# Testing
+pytest==8.0.0
+pytest-xdist==3.5.0    # For parallel test execution (Suspect 3)
+requests==2.31.0
+
+# For Suspect 7 (AI indeterminacy demo)
+# We'll mock this, but including for realism
+openai==1.12.0
