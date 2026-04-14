@@ -1,7 +1,7 @@
 """
 SUSPECT 2: Test Order Dependency
 
-THE ASSUMPTION: "Test A always runs before test B."
+THE Fix: "Test A is independent of B."
 """
 
 import requests
