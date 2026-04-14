@@ -9,6 +9,8 @@ werkzeug==3.0.1
 pytest==8.0.0
 pytest-xdist==3.5.0    # For parallel test execution (Suspect 3)
 requests==2.31.0
+httpx==0.27.0          # For HTTP calls in server code
+respx==0.21.1          # For mocking httpx calls in tests (Suspect 6)
 
 # For Suspect 7 (AI indeterminacy demo)
 # We'll mock this, but including for realism
