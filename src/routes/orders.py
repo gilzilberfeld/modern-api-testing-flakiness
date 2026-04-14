@@ -41,7 +41,7 @@ def create_order():
     if not req_data or "book_id" not in req_data or "user_id" not in req_data:
         abort(400, description="book_id and user_id are required")
 
-    book_id = req_data["book_id"]  # Now a string (unique_id)
+    book_id = req_data["book_id"]
     if book_id not in data.books:
         abort(404, description="Book not found")
 
@@ -49,15 +49,8 @@ def create_order():
     if book["stock"] <= 0:
         abort(400, description="Book out of stock")
 
-    # Calculate price with potential premium discount
     price = book["price"]
     user_id = req_data["user_id"]
-    discount_applied = False
-
-    if data.FEATURE_FLAGS["premium_discount"] and user_id in data.users:
-        if data.users[user_id].get("is_premium"):
-            price = price * 0.9  # 10% discount
-            discount_applied = True
 
     # Process payment through external gateway (unreliable!)
     payment_result = process_payment(price)
@@ -72,7 +65,6 @@ def create_order():
         "book_id": book_id,
         "user_id": user_id,
         "price": price,
-        "discount_applied": discount_applied,
         "status": "confirmed",
         "transaction_id": payment_result["transaction_id"],
         "created_at": datetime.now(timezone.utc).isoformat(),

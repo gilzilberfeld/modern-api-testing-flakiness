@@ -97,12 +97,6 @@ def delete_book(book_id):
     return "", 204
 
 
-@books_bp.route("/books/count", methods=["GET"])
-def count_books():
-    """Returns the total count of books - useful for concurrency tests."""
-    return jsonify({"count": len(data.books)})
-
-
 @books_bp.route("/books/auto", methods=["POST"])
 def create_book_with_llm():
     """

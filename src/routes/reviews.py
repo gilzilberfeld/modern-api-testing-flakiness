@@ -26,16 +26,13 @@ def create_review(book_id):
     if not req_data or "rating" not in req_data:
         abort(400, description="Rating is required")
 
-    # Feature flag: review moderation
-    status = "pending" if data.FEATURE_FLAGS["review_moderation"] else "approved"
-
     review = {
         "id": data.next_review_id,
         "book_id": book_id,
         "user_id": req_data.get("user_id"),
         "rating": req_data["rating"],
         "comment": req_data.get("comment", ""),
-        "status": status,
+        "status": "approved",
         "created_at": datetime.now(timezone.utc).isoformat(),
     }
     data.reviews[data.next_review_id] = review

@@ -17,14 +17,12 @@ app = Flask(__name__)
 # Register blueprints
 from src.routes.health import health_bp
 from src.routes.books import books_bp
-from src.routes.users import users_bp
 from src.routes.reviews import reviews_bp
 from src.routes.orders import orders_bp
 from src.routes.special import special_bp
 
 app.register_blueprint(health_bp)
 app.register_blueprint(books_bp)
-app.register_blueprint(users_bp)
 app.register_blueprint(reviews_bp)
 app.register_blueprint(orders_bp)
 app.register_blueprint(special_bp)
