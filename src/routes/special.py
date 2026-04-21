@@ -11,7 +11,6 @@ special_bp = Blueprint("special", __name__)
 
 @special_bp.route("/unreliable-payment", methods=["POST"])
 def unreliable_payment():
-    """Simulates an unreliable payment gateway - randomly fails 30% of the time."""
     if random.random() < 0.3:
         abort(503, description="Payment gateway temporarily unavailable")
     return jsonify({"status": "approved", "transaction_id": f"TXN-{random.randint(1000, 9999)}"})

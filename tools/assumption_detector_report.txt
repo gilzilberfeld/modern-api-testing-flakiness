@@ -1,0 +1,435 @@
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C01_State_Polution/test_01_state_pollution.py
+Tests found: 1
+
+──────────────────────────────────────────────────────────
+Test: test_create_and_get_book
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book ID "book-123" does not already exist in the system
+   Risk [High]: On a second test run against the same server (without reset), the POST returns a conflict or overwrites existing data, causing the test to fail.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 2
+Primary suspect: State Pollution
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C01_State_Polution/test_01_state_pollution_solution.py
+Tests found: 1
+
+──────────────────────────────────────────────────────────
+Test: test_create_and_get_book
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: LOW
+Assumptions found: 1
+Primary suspect: (none)
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C02_Dependency/test_02_order_dependency.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_create_book_to_delete
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book ID "book-to-delete" does not already exist in the system
+   Risk [High]: On a second test run against the same server (without reset), the POST returns a conflict or overwrites existing data, causing the test to fail.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_delete_book_created_by_previous_test
+──────────────────────────────────────────────────────────
+
+1. [Test Order Dependency] test_create_book_to_delete has already run and created the book with ID "book-to-delete"
+   Risk [High]: If tests run in a different order, in isolation, or after a server reset, the book does not exist and the DELETE fails.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 4
+Primary suspect: State Pollution, Test Order Dependency
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C02_Dependency/test_02_order_dependency_solution.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_create_book_to_delete
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book ID "book-to-create" does not already exist in the system
+   Risk [High]: On a second test run against the same server (without reset), the POST returns a conflict or overwrites existing data, causing the test to fail.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_delete_book_created_by_previous_test
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book ID "book-to-delete" does not already exist in the system
+   Risk [High]: On a second test run against the same server (without reset), the POST returns a conflict or overwrites existing data, causing the test to fail.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 4
+Primary suspect: State Pollution
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C03_Concurrency/test_03_concurrency.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_add_review
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book "book-1" exists in the system
+   Risk [High]: If the server is reset or the book was never created, the GET returns 404 and the test fails.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_count_reviews_incremented_correctly
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book "book-1" exists in the system
+   Risk [High]: If the server is reset or the book was never created, the GET returns 404 and the test fails.
+
+2. [Concurrency] No other process adds or removes reviews on "book-1" between the count check and assertion
+   Risk [High]: When tests run in parallel (e.g., with pytest-xdist), another test adding a review to "book-1" causes the count to increase by more than 1, failing the assertion.
+
+3. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 5
+Primary suspect: State Pollution, Concurrency
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C03_Concurrency/test_03_concurrency_solution.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_add_review_isolated
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_count_reviews_incremented_correctly_isolated
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: LOW
+Assumptions found: 2
+Primary suspect: (none)
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C04_Time_Locale/test_04_time_locale.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_create_order_appears_in_todays_orders
+──────────────────────────────────────────────────────────
+
+1. [Time & Locale] The test machine and server share the same notion of "today"
+   Risk [High]: If the test runs in a different timezone than the server, or near midnight UTC, the order may be dated "tomorrow" or "yesterday" relative to the server's /orders/today endpoint, causing the assertion to fail.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_order_date_format_matches_expected
+──────────────────────────────────────────────────────────
+
+1. [Time & Locale] The test machine and server share the same timezone and date format
+   Risk [High]: datetime.now() on the test machine may return a different date than the server's created_at timestamp if they are in different timezones or if the test runs near midnight. The assertion comparing local date to server date fails.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 4
+Primary suspect: Time & Locale
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C04_Time_Locale/test_04_time_locale_solution.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_create_order_appears_in_todays_orders
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_order_date_format_is_valid_iso8601
+──────────────────────────────────────────────────────────
+
+1. [Time & Locale] The test machine and server clocks are synchronized within 60 seconds
+   Risk [High]: If the test machine clock is significantly out of sync with the server clock (more than 60 seconds drift), the time difference assertion fails even though the test logic is correct.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 3
+Primary suspect: Time & Locale
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C05_Environment_Config/test_05_environment_config.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_get_books_from_configured_server
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The config file exists at /etc/bookstore/server_config.json
+   Risk [High]: This Linux-specific path does not exist on Windows or most CI environments. The test fails before making any API calls.
+
+2. [Environment & Configuration] The server is running and reachable at the configured URL
+   Risk [Low]: If the server is not running or the URL in the config is wrong, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_server_health_from_configured_url
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The config file exists at /etc/bookstore/server_config.json
+   Risk [High]: This Linux-specific path does not exist on Windows or most CI environments. The test fails before making any API calls.
+
+2. [Environment & Configuration] The server is running and reachable at the configured URL
+   Risk [Low]: If the server is not running or the URL in the config is wrong, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 4
+Primary suspect: Environment & Configuration
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C05_Environment_Config/test_05_environment_config_solution.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_get_books_from_configured_server
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The server is running and reachable at the resolved URL
+   Risk [Low]: If the server is not running or the fallback URL is incorrect, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_server_health_from_configured_url
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The server is running and reachable at the resolved URL
+   Risk [Low]: If the server is not running or the fallback URL is incorrect, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: LOW
+Assumptions found: 2
+Primary suspect: (none)
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C06_Third_Party/test_06_third_party.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_load_settings_and_verify_server
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The config file exists at /etc/bookstore/settings.json
+   Risk [High]: This Linux-specific path does not exist on Windows or most CI environments. The test fails before making any API calls.
+
+2. [Environment & Configuration] The server is running and reachable at the configured URL
+   Risk [Low]: If the server is not running or the URL in the config is wrong, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_create_order_with_payment
+──────────────────────────────────────────────────────────
+
+1. [Third-Party Dependencies] The payment service called by /orders behaves consistently
+   Risk [High]: The /orders endpoint internally depends on a payment service. If that service is unreliable, intermittently slow, or returns errors, the test fails randomly despite correct test logic.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 4
+Primary suspect: Environment & Configuration, Third-Party Dependencies
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C06_Third_Party/test_06_third_party_solution.py
+Tests found: 2
+
+──────────────────────────────────────────────────────────
+Test: test_load_settings_and_verify_server
+──────────────────────────────────────────────────────────
+
+1. [Environment & Configuration] The server is running and reachable at the resolved URL
+   Risk [Low]: If the server is not running or the fallback URL is incorrect, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_create_order_with_payment
+──────────────────────────────────────────────────────────
+
+1. [Third-Party Dependencies] The respx mock intercepts the payment service call
+   Risk [High]: The test uses respx to mock httpx calls, but the test itself uses the requests library to call the server. The mock may not intercept the server's internal call to the payment service if the server runs in a separate process, leaving the test still dependent on the real payment service behavior.
+
+2. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 3
+Primary suspect: Third-Party Dependencies
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C07_AI_Indeterminacy/test_07_ai_indeterminacy.py
+Tests found: 1
+
+──────────────────────────────────────────────────────────
+Test: test_create_book_with_llm_author
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book ID "design-patterns-test" does not already exist in the system
+   Risk [High]: On a second test run against the same server (without reset), the POST returns a conflict or overwrites existing data, causing the test to fail.
+
+2. [AI Response Indeterminacy] The LLM returns exactly "Gang of Four" for the Design Patterns book author
+   Risk [High]: LLMs are non-deterministic and may return different valid phrasings such as "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides", "Gamma et al.", or other variations. The exact-match assertion fails when the LLM chooses a different phrasing.
+
+3. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 3
+Primary suspect: State Pollution, AI Response Indeterminacy
+
+══════════════════════════════════════════════════════════
+ASSUMPTION DETECTOR REPORT
+══════════════════════════════════════════════════════════
+File: tests/C07_AI_Indeterminacy/test_07_ai_indeterminacy_solution.py
+Tests found: 3
+
+──────────────────────────────────────────────────────────
+Test: test_create_book_with_mocked_llm
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book ID "design-patterns-mocked" does not already exist in the system
+   Risk [High]: On a second test run against the same server (without reset), the POST returns a conflict or overwrites existing data, causing the test to fail.
+
+2. [Third-Party Dependencies] The mock patches the correct location for lookup_author_with_llm
+   Risk [High]: The mock patches "src.routes.books.lookup_author_with_llm", but if the server runs in a separate process, the mock has no effect on the server's actual code. The test still calls the real LLM.
+
+3. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_create_book_validates_semantic_correctness
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book ID "design-patterns-semantic" does not already exist in the system
+   Risk [High]: On a second test run against the same server (without reset), the POST returns a conflict or overwrites existing data, causing the test to fail.
+
+2. [AI Response Indeterminacy] The LLM returns an author string containing at least one of the valid author references
+   Risk [High]: While the validation is more flexible than an exact match, the LLM could return an unexpected format, a hallucination, or an error message that contains none of the expected substrings, causing the assertion to fail.
+
+3. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+Test: test_create_book_with_score_validation
+──────────────────────────────────────────────────────────
+
+1. [State Pollution] The book ID "design-patterns-scored" does not already exist in the system
+   Risk [High]: On a second test run against the same server (without reset), the POST returns a conflict or overwrites existing data, causing the test to fail.
+
+2. [AI Response Indeterminacy] The LLM returns an author string with a confidence score of at least 20
+   Risk [High]: While score-based validation is more robust than exact matching, the LLM could return an unexpected response, hallucination, or format that scores below the threshold, causing the test to fail.
+
+3. [Environment & Configuration] The server is running and reachable at BASE_URL
+   Risk [Low]: If the server is not running or the URL is misconfigured, the test fails due to connection error.
+
+──────────────────────────────────────────────────────────
+VERDICT
+──────────────────────────────────────────────────────────
+Flakiness risk: HIGH
+Assumptions found: 9
+Primary suspect: State Pollution, Third-Party Dependencies, AI Response Indeterminacy

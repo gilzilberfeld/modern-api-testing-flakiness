@@ -16,7 +16,6 @@ PAYMENT_SERVICE_URL = "http://localhost:5000/unreliable-payment"
 def process_payment(amount):
     """
     Calls the external payment gateway service.
-    The service is unreliable - fails 30% of the time.
     """
     try:
         response = httpx.post(PAYMENT_SERVICE_URL, json={"amount": amount})
