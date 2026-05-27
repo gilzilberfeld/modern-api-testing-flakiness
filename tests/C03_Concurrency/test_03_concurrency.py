@@ -1,17 +1,9 @@
-"""
-SUSPECT 3: Concurrency
-
-THE ASSUMPTION: "The tests run in sequence."
-
-"""
-
 import requests
 
 BASE_URL = "http://localhost:5000"
 
 
 def test_add_review():
-    """Gets a book by ID and adds a review to it."""
     book_id = "book-1"
 
     response = requests.get(f"{BASE_URL}/books/{book_id}")
@@ -27,7 +19,6 @@ def test_add_review():
 
 
 def test_count_reviews_incremented_correctly():
-    """Gets review count, adds a review, verifies count incremented by exactly 1."""
     book_id = "book-1"
 
     response = requests.get(f"{BASE_URL}/books/{book_id}/reviews")

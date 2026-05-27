@@ -28,19 +28,6 @@ def setup_module():
 # =============================================================================
 
 def test_create_book_with_llm_author():
-    """
-    Creates a book using the /books/auto endpoint which uses an LLM
-    to look up the author, then verifies the author matches expected value.
-
-    FLAKY BECAUSE: The LLM returns different formats for the same book:
-    - "Gang of Four"
-    - "Erich Gamma, Richard Helm, Ralph Johnson, John Vlissides"
-    - "Gamma, Helm, Johnson, and Vlissides"
-    - "Erich Gamma et al."
-    - etc.
-
-    The test expects an exact match, but the LLM is non-deterministic.
-    """
     # Create a book - LLM will look up the author
     response = requests.post(f"{BASE_URL}/books/auto", json={
         "unique_id": "design-patterns-test",
@@ -49,7 +36,6 @@ def test_create_book_with_llm_author():
     })
     assert response.status_code == 201
 
-    # Get the book and verify the author
     get_response = requests.get(f"{BASE_URL}/books/design-patterns-test")
     assert get_response.status_code == 200
 

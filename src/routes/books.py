@@ -16,12 +16,6 @@ GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini
 
 
 def lookup_author_with_llm(title):
-    """
-    Calls Gemini to look up the author of a book.
-
-    LLMs are non-deterministic - they return different phrasings
-    for the same question, especially for books with multiple authors.
-    """
     if not GEMINI_API_KEY:
         return "Unknown Author (No API key)"
 

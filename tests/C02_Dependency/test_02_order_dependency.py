@@ -1,19 +1,11 @@
-"""
-SUSPECT 2: Test Order Dependency
-
-THE Fix: "Test A is independent of B."
-"""
-
 import requests
 
 from tests.conftest import BASE_URL
 
-
 SHARED_BOOK_ID = "book-to-delete"
 
-
 def test_create_book_to_delete():
-    """Creates a book that the next test will try to delete."""
+    # Creates a book
     book_data = {
         "unique_id": SHARED_BOOK_ID,
         "title": "Temporary Book",
@@ -27,11 +19,6 @@ def test_create_book_to_delete():
 
 
 def test_delete_book_created_by_previous_test():
-    """
-    This test DEPENDS on test_create_book_to_delete running first.
-    Demonstrates the flaw: if this test runs alone, or if the server resets,
-    it will fail because the book doesn't exist.
-    """
     # Delete the book created by the previous test
     response = requests.delete(f"{BASE_URL}/books/{SHARED_BOOK_ID}")
     assert response.status_code == 204

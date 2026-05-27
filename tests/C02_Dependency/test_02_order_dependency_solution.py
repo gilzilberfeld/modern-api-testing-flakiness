@@ -1,17 +1,9 @@
-"""
-SUSPECT 2: Test Order Dependency
-
-THE ASSUMPTION: "Test A always runs before test B."
-"""
-
 import requests
 
 from tests.conftest import BASE_URL
 
-
 BOOK_ID1 = "book-to-create"
 BOOK_ID2 = "book-to-delete"
-
 
 def test_create_book_to_delete():
     book_data = {
